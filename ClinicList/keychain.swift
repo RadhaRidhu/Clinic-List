@@ -11,6 +11,7 @@ import Security
 
 class Keychain {
     
+    //Save the data for a key in keychain
     class func save(key: String, name: String) -> Bool {
         
         let data = name.dataUsingEncoding(NSUTF8StringEncoding)
@@ -22,11 +23,21 @@ class Keychain {
         
         SecItemDelete(query as CFDictionaryRef)
         
-        let status: OSStatus = SecItemAdd(query as CFDictionaryRef, nil)
+        if SecItemCopyMatching(query, nil) == noErr
+        {
+            let attributesToUpdate = [kSecValueData as String   : data!]
+            let status: OSStatus = SecItemUpdate(query, attributesToUpdate)
+            return status == noErr
+        }
+        else
+        {
+            let status: OSStatus = SecItemAdd(query as CFDictionaryRef, nil)
+            return status == noErr
+        }
+
         
-        return status == noErr
     }
-    
+    //Retrieve the data for a key in keychain
     class func load(key: String) -> String? {
         let query = [
             kSecClass as String       : kSecClassGenericPassword,
@@ -45,20 +56,11 @@ class Keychain {
             return ""
         }
     }
-    
+       //Delete key from keychain
     class func delete(key: String) -> Bool {
         let query = [
             kSecClass as String       : kSecClassGenericPassword,
             kSecAttrAccount as String : key ]
-        
-        let status: OSStatus = SecItemDelete(query as CFDictionaryRef)
-        
-        return status == noErr
-    }
-    
-    
-    class func clear() -> Bool {
-        let query = [ kSecClass as String : kSecClassGenericPassword ]
         
         let status: OSStatus = SecItemDelete(query as CFDictionaryRef)
         

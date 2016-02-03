@@ -6,7 +6,6 @@
 //  Copyright © 2016 Radha Natesan. All rights reserved.
 //
 
-import Foundation
 import CoreLocation
 
 class ClinicList: NSObject {
@@ -49,4 +48,5 @@ class ClinicList: NSObject {
    
         return ClinicList(clinicId: clinicId, location: location, clinicName: clinicName, clinicPreference:clinicPreference, coordinate: coordinate)
     }
+
 }
